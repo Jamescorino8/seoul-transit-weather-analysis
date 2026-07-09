@@ -13,9 +13,12 @@ mean_vol = df['Total_Volume'].mean()
 std_vol = df['Total_Volume'].std()
 
 # Drop rows exceeding 2 standard deviations
-upper_limit = mean_vol + (2 * std_vol)
-lower_limit = mean_vol - (2 * std_vol)
+upper_limit = mean_vol + (3 * std_vol)
+lower_limit = mean_vol - (3 * std_vol)
 clean_df = df[(df['Total_Volume'] <= upper_limit) & (df['Total_Volume'] >= lower_limit)].copy()
+
+# Create weather categories
+clean_df['Weather_Type'] = np.where(clean_df['Precipitation'] > 0, 'Rain', 'Dry')
 
 # Save processed data
 clean_df.to_csv('data/processed/Transit_Weather_Clean.csv', index=False)
