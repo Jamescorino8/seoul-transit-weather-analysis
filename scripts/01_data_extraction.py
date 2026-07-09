@@ -13,12 +13,16 @@ weather_params = {
     "latitude": 37.5665,
     "longitude": 126.9780,
     "start_date": "2026-04-01",
-    "end_date": "2026-04-30",
+    "end_date": "2026-06-30",
     "daily": ["temperature_2m_mean", "precipitation_sum"],
     "timezone": "Asia/Seoul"
 }
-weather_res = requests.get(weather_url, params=weather_params)
-weather_data = weather_res.json()
+
+# HTTP GET request using weatehr parameters
+weather_res = requests.get(weather_url, params=weather_params) 
+
+# Convert response to python dictionary
+weather_data = weather_res.json() 
 
 weather_df = pd.DataFrame({
     'Date': pd.to_datetime(weather_data['daily']['time']),
@@ -26,4 +30,29 @@ weather_df = pd.DataFrame({
     'Precipitation': weather_data['daily']['precipitation_sum']
 })
 
-print(weather_df.head())
+# ----- Transit Data Aquisition -----
+API_KEY = "Need API Key!: https://www.google.com/url?sa=i&source=web&rct=j&url=https://data.seoul.go.kr/together/mypage/actkeyMain.do&ved=2ahUKEwiCiZ-H4sSVAxUMqFYBHfRCMe4Qy_kOegoIAggACAAIBhAC&opi=89978449&cd&psig=AOvVaw2aMeTQvrlzYNASupgx8Ihg&ust=1783658021070000"
+date_range = pd.date_range(start="2026-04-01", end="2026-06-30")
+transit_passenger_volumes = []
+
+for date in date_range:
+    date_str = date.strftime('%Y%m%d')
+    url = f"http://openapi.seoul.go.kr:8088/{API_KEY}/json/tpssEmdOdtc/1/1000/{date_str}"
+    
+    try:
+        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+        if response.status_code == 200:
+            data = response.json()
+            if 'tpssEmdOdtc' in data:
+                df = pd.DataFrame(data['tpssEmdOdtc']['row'])
+                df['전체_승객_수'] = pd.to_numeric(df['전체_승객_수'], errors='coerce')
+                transit_passenger_volumes.append({'Date': date, 'Total_Volume': df['전체_승객_수'].sum()})
+        time.sleep(1)
+    except Exception as e:
+        print(f"Failed on {date_str}: {e}")
+
+transit_df = pd.DataFrame(transit_passenger_volumes)
+
+# ----- Merge and save dataframes -----
+final_df = pd.merge(transit_df, weather_df, on='Date', how='inner')
+final_df.to_csv('data/raw/Transit_Weather_Raw.csv', index=False)
