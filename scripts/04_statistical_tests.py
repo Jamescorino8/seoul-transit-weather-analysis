@@ -10,7 +10,7 @@ rain_volume = df[df['Weather_Type'] == 'Rain']['Total_Volume']
 
 print("--- Statistical Analysis: Dry vs. Rainy Days ---")
 
-# Levene's test to check variance homogeneity
+# Levene's test to check variance
 stat, p_levene = stats.levene(dry_volume, rain_volume)
 
 # Independent t-test to check if means differ
