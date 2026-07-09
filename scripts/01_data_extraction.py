@@ -31,7 +31,7 @@ weather_df = pd.DataFrame({
 })
 
 # ----- Transit Data Aquisition -----
-API_KEY = "Need API Key!: https://www.google.com/url?sa=i&source=web&rct=j&url=https://data.seoul.go.kr/together/mypage/actkeyMain.do&ved=2ahUKEwiCiZ-H4sSVAxUMqFYBHfRCMe4Qy_kOegoIAggACAAIBhAC&opi=89978449&cd&psig=AOvVaw2aMeTQvrlzYNASupgx8Ihg&ust=1783658021070000"
+API_KEY = "6e7161785473616c31313553426f5744"
 date_range = pd.date_range(start="2026-04-01", end="2026-06-30")
 transit_passenger_volumes = []
 
@@ -53,6 +53,6 @@ for date in date_range:
 
 transit_df = pd.DataFrame(transit_passenger_volumes)
 
-# ----- Merge and save dataframes -----
+# Merge and save dataframes
 final_df = pd.merge(transit_df, weather_df, on='Date', how='inner')
 final_df.to_csv('data/raw/Transit_Weather_Raw.csv', index=False)
