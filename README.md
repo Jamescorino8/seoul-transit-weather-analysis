@@ -17,3 +17,10 @@ Data analysis:
 Quantifying the sociopsychological dimensions with word frequency or LLMs
 Apply statistical analysis, presenting the results with tables and figures
 Discuss and explain your results and draw conclusions
+
+
+## Branch Updates
+
+### `01-update`
+
+Updated the relevant data acquisition section in Script 01.
