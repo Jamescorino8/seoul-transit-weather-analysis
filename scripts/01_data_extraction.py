@@ -31,28 +31,110 @@ weather_df = pd.DataFrame({
 })
 
 # ----- Transit Data Aquisition -----
-API_KEY = "6e7161785473616c31313553426f5744"
-date_range = pd.date_range(start="2026-04-01", end="2026-06-30")
-transit_passenger_volumes = []
+API_KEY = "API-KEY-HERE"
+SERVICE_NAME = "tpssPassengerCnt"
+PAGE_SIZE = 1000
 
-for date in date_range:
-    date_str = date.strftime('%Y%m%d')
-    url = f"http://openapi.seoul.go.kr:8088/{API_KEY}/json/tpssEmdOdtc/1/1000/{date_str}"
-    
+START_DATE = pd.Timestamp("2026-04-01")
+END_DATE = pd.Timestamp("2026-06-30")
+
+
+def request_transit_page(start_index, end_index):
+    url = (
+        f"http://openapi.seoul.go.kr:8088/"
+        f"{API_KEY}/json/{SERVICE_NAME}/"
+        f"{start_index}/{end_index}/"
+    )
+
+    response = requests.get(
+        url,
+        timeout=60
+    )
+
+    response.raise_for_status()
+    data = response.json()
+
+    if SERVICE_NAME not in data:
+        raise RuntimeError(
+            f"Transit API error: {data}"
+        )
+
+    service_data = data[SERVICE_NAME]
+
+    rows = service_data.get("row", [])
+    total_count = int(
+        service_data.get("list_total_count", 0)
+    )
+    return rows, total_count
+
+
+# Check total number of records
+_, total_count = request_transit_page(1, 1)
+print("Total transit records:", total_count)
+
+
+# Download all pages
+all_rows = []
+
+for start_index in range(1, total_count + 1, PAGE_SIZE):
+    end_index = min(
+        start_index + PAGE_SIZE - 1,
+        total_count
+    )
+
     try:
-        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-        if response.status_code == 200:
-            data = response.json()
-            if 'tpssEmdOdtc' in data:
-                df = pd.DataFrame(data['tpssEmdOdtc']['row'])
-                df['전체_승객_수'] = pd.to_numeric(df['전체_승객_수'], errors='coerce')
-                transit_passenger_volumes.append({'Date': date, 'Total_Volume': df['전체_승객_수'].sum()})
-        time.sleep(1)
-    except Exception as e:
-        print(f"Failed on {date_str}: {e}")
+        rows, _ = request_transit_page(
+            start_index,
+            end_index
+        )
 
-transit_df = pd.DataFrame(transit_passenger_volumes)
+        all_rows.extend(rows)
+
+        print(
+            f"Downloaded {start_index:,}-{end_index:,} "
+            f"({len(all_rows):,}/{total_count:,})"
+        )
+
+    except Exception as e:
+        print(
+            f"Failed on rows "
+            f"{start_index}-{end_index}: {e}"
+        )
+
+    time.sleep(0.1)
+
+
+# ----- Create Daily Transit Data -----
+transit_raw_df = pd.DataFrame(all_rows)
+
+transit_raw_df["Date"] = pd.to_datetime(
+    transit_raw_df["CRTR_DD"],
+    format="%Y%m%d",
+    errors="coerce"
+)
+
+transit_raw_df["PSNG_NO"] = pd.to_numeric(
+    transit_raw_df["PSNG_NO"],
+    errors="coerce"
+)
+
+transit_df = (
+    transit_raw_df[
+        transit_raw_df["Date"].between(
+            START_DATE,
+            END_DATE
+        )
+    ]
+    .groupby("Date", as_index=False)
+    .agg(
+        Total_Volume=("PSNG_NO", "sum")
+    )
+)
 
 # Merge and save dataframes
 final_df = pd.merge(transit_df, weather_df, on='Date', how='inner')
 final_df.to_csv('data/raw/Transit_Weather_Raw.csv', index=False)
+
+print("\nSaved")
+print(final_df.head())
+print(final_df.shape)

@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+#import statsmodels.formula.api as smf 
 
 # Load raw data
 df = pd.read_csv('data/raw/Transit_Weather_Raw.csv')
@@ -19,6 +20,20 @@ clean_df = df[(df['Total_Volume'] <= upper_limit) & (df['Total_Volume'] >= lower
 
 # Create weather categories
 clean_df['Weather_Type'] = np.where(clean_df['Precipitation'] > 0, 'Rain', 'Dry')
+
+"""
+# Create day-of-week variable
+clean_df["Day_of_Week"] = clean_df["Date"].dt.day_name()
+
+# Regression analysis
+model = smf.ols(
+    "Total_Volume ~ Precipitation + C(Day_of_Week)",
+    data=clean_df
+).fit()
+
+print(model.summary())
+"""
+
 
 # Save processed data
 clean_df.to_csv('data/processed/Transit_Weather_Clean.csv', index=False)
