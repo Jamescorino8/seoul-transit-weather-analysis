@@ -19,21 +19,25 @@ Apply statistical analysis, presenting the results with tables and figures
 Discuss and explain your results and draw conclusions
 
 
-## Branch Updates
+## Setup
 
-### `01-update`
+### Configuration File
 
-Updated the relevant data acquisition section in Script 01.
+Create a `scripts/config.py` file with your API keys:
 
-### `full-update`
+```python
+# API Configuration
+# Store sensitive API keys here - add this file to .gitignore
 
-Uploaded the fully integrated and working version of the project.
+YOUTUBE_API_KEY = "your_youtube_api_key_here"
+DEEPSEEK_API_KEY = "your_deepseek_api_key_here"
+DEEPSEEK_MODEL = "deepseek-v4-flash"
+```
 
-* **Script 03:** Implemented text analysis
-* **Script 04:** Added statistical tests for the text analysis
-* **Script 05:** Added visualizations for the text analysis results
+**Note:** `config.py` is included in `.gitignore` and will not be tracked by git.
 
-## Main Results
+
+## Results
 
 ### Transportation Volume Analysis
 
