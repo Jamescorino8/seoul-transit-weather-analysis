@@ -31,7 +31,7 @@ weather_df = pd.DataFrame({
 })
 
 # ----- Transit Data Aquisition -----
-API_KEY = "API-KEY-HERE"
+API_KEY = "6e7161785473616c31313553426f5744"
 SERVICE_NAME = "tpssPassengerCnt"
 PAGE_SIZE = 1000
 

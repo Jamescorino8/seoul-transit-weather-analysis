@@ -26,7 +26,9 @@ sns.boxplot(
     y='Total_Volume', 
     data=df, 
     ax=axes[1],
-    palette='Set2'
+    hue='Weather_Type',
+    palette='Set2',
+    legend=False
 )
 axes[1].set_title('Passenger Distribution: Dry vs. Rain')
 axes[1].set_xlabel('Weather Condition')

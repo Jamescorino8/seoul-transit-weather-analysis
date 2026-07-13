@@ -7,11 +7,9 @@ import pandas as pd
 import requests
 from openai import OpenAI
 
+from config import YOUTUBE_API_KEY, DEEPSEEK_API_KEY, DEEPSEEK_MODEL
 
 # ----- Configuration -----
-YOUTUBE_API_KEY = "API-KEY-HERE"
-DEEPSEEK_API_KEY = "API-KEY-HERE"
-DEEPSEEK_MODEL = "deepseek-v4-flash"
 
 SEARCH_URL = "https://www.googleapis.com/youtube/v3/search"
 VIDEO_URL = "https://www.googleapis.com/youtube/v3/videos"
@@ -23,9 +21,12 @@ SELECTED_CANDIDATE_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 PROCESSED_DIR = Path("data/processed")
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
+TEMP_DIR = PROCESSED_DIR / "temp"
+TEMP_DIR.mkdir(parents=True, exist_ok=True)
+
 FINAL_OUTPUT_PATH = PROCESSED_DIR / "Rain_Commute_Clean.csv"
-LABEL_PROGRESS_PATH = PROCESSED_DIR / "/temp/temp_Rain_Comment_Labels.csv"
-EMOTION_PROGRESS_PATH = PROCESSED_DIR / "/temp/temp_Emotion_Labels.csv"
+LABEL_PROGRESS_PATH = TEMP_DIR / "temp_Rain_Comment_Labels.csv"
+EMOTION_PROGRESS_PATH = TEMP_DIR / "temp_Emotion_Labels.csv"
 
 
 # ----- API Validation -----
