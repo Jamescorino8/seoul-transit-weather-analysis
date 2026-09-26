@@ -2,12 +2,14 @@ import requests
 import pandas as pd
 import time
 
+from config import SEOUL_OPEN_DATA_KEY
+
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
     "Accept-Language": "en-US,en;q=0.9",
 }
 
-# ----- Weather Data Aquisition -----
+# ----- Weather Data Acquisition -----
 weather_url = "https://archive-api.open-meteo.com/v1/archive"
 weather_params = {
     "latitude": 37.5665,
@@ -18,7 +20,7 @@ weather_params = {
     "timezone": "Asia/Seoul"
 }
 
-# HTTP GET request using weatehr parameters
+# HTTP GET request using weather parameters
 weather_res = requests.get(weather_url, params=weather_params) 
 
 # Convert response to python dictionary
@@ -30,8 +32,7 @@ weather_df = pd.DataFrame({
     'Precipitation': weather_data['daily']['precipitation_sum']
 })
 
-# ----- Transit Data Aquisition -----
-API_KEY = "6e7161785473616c31313553426f5744"
+# ----- Transit Data Acquisition -----
 SERVICE_NAME = "tpssPassengerCnt"
 PAGE_SIZE = 1000
 
@@ -42,7 +43,7 @@ END_DATE = pd.Timestamp("2026-06-30")
 def request_transit_page(start_index, end_index):
     url = (
         f"http://openapi.seoul.go.kr:8088/"
-        f"{API_KEY}/json/{SERVICE_NAME}/"
+        f"{SEOUL_OPEN_DATA_KEY}/json/{SERVICE_NAME}/"
         f"{start_index}/{end_index}/"
     )
 
