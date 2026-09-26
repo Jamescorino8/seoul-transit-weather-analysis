@@ -82,6 +82,11 @@ The text branch collected 492 comments across nine videos, filtered to the 120 t
 
 Known limitations, as reported: YouTube selection bias, LLM labeling subjectivity, low expected frequencies in the chi-square, and no basis for causal interpretation.
 
-## Notes
+## Contributors
 
-A team project for a Statistic in Python course at Sungkyunkwan University (SKKU). The transit and weather branch, from data acquisition through the t-test and its figures, is mine; the text-analysis branch is a teammate's.
+A team project for Statistics in Python course at Sungkyunkwan University (SKKU).
+
+| | Contribution |
+|---|---|
+| [James Corino](https://github.com/Jamescorino8) | Transit and weather branch: data acquisition, cleaning, t-test, figures |
+| [Jiwoo Kim](https://github.com/kzzadukie) | Text-analysis branch: YouTube collection, LLM coding, chi-square, figures |
