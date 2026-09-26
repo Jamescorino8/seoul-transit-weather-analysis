@@ -29,6 +29,8 @@ Create a `scripts/config.py` file with your API keys:
 # API Configuration
 # Store sensitive API keys here - add this file to .gitignore
 
+SEOUL_OPEN_DATA_KEY = "your_seoul_open_data_key_here"
+
 YOUTUBE_API_KEY = "your_youtube_api_key_here"
 DEEPSEEK_API_KEY = "your_deepseek_api_key_here"
 DEEPSEEK_MODEL = "deepseek-v4-flash"
